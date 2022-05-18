@@ -243,27 +243,29 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   Vector3D sum(0,0,0);
   int cnt = 0;
   double s1 = 0, s2 = 0, sigma2 = 0, miu = 0;
-  for(int i = 0; i < num_samples; i++){
-    cnt++;
-    if(cnt % samplesPerBatch == 0){
-      double I;
-      miu = s1 / (double) cnt; 
-      sigma2 = (1 / ((double)cnt - 1) ) * (s2 - s1 * s1 / (double)cnt);
-      I = 1.96 * sqrt(sigma2 / (double)cnt);
-      if(I <= maxTolerance * miu) break;
-    }
-    Vector2D samplePosition = origin + gridSampler->get_sample();
-    Ray sampledRay;
-    Vector3D temp;
-    samplePosition.x /= sampleBuffer.w;
-    samplePosition.y /= sampleBuffer.h;
-    sampledRay = camera->generate_ray(samplePosition.x,samplePosition.y);
-    sampledRay.depth = 0;
-    temp = PathTracer::est_radiance_global_illumination(sampledRay);
-    sum += temp;
+  for(int color = 0; color < 3; color++){
+    for(int i = 0; i < num_samples; i++){
+      cnt++;
+      if(cnt % samplesPerBatch == 0){
+        double I;
+        miu = s1 / (double) cnt; 
+        sigma2 = (1 / ((double)cnt - 1) ) * (s2 - s1 * s1 / (double)cnt);
+        I = 1.96 * sqrt(sigma2 / (double)cnt);
+        if(I <= maxTolerance * miu) break;
+      }
+      Vector2D samplePosition = origin + gridSampler->get_sample();
+      Ray sampledRay;
+      Vector3D temp;
+      samplePosition.x /= sampleBuffer.w;
+      samplePosition.y /= sampleBuffer.h;
+      sampledRay = camera->generate_ray(samplePosition.x,samplePosition.y,color);
+      sampledRay.depth = 0;
+      temp = PathTracer::est_radiance_global_illumination(sampledRay);
+      sum += temp;
 
-    s1 += temp.illum();
-    s2 += temp.illum() * temp.illum();
+      s1 += temp.illum();
+      s2 += temp.illum() * temp.illum();
+    }
   }
   sum /= (double) cnt;
   sampleBuffer.update_pixel(sum, x, y);
@@ -271,7 +273,7 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
 }
 
 void PathTracer::autofocus(Vector2D loc) {
-  Ray r = camera->generate_ray(loc.x / sampleBuffer.w, loc.y / sampleBuffer.h);
+  Ray r = camera->generate_ray(loc.x / sampleBuffer.w, loc.y / sampleBuffer.h,0); //todo
   Intersection isect;
 
   bvh->intersect(r, &isect);

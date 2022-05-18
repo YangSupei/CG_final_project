@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <random>
+#include <chrono>
 
 #include "CGL/misc.h"
 #include "CGL/vector2D.h"
@@ -187,7 +189,7 @@ void Camera::load_settings(string filename) {
 /**
  * This function generates a ray from camera perspective, passing through camera / sensor plane (x,y)
  */
-Ray Camera::generate_ray(double x, double y) const {
+Ray Camera::generate_ray(double x, double y,int color) const {
 
   // TODO (Part 1.1):
   // compute position of the input sensor sample coordinate on the
@@ -203,7 +205,21 @@ Ray Camera::generate_ray(double x, double y) const {
   ret.o = pos;
   ret.max_t = fClip;
   ret.min_t = nClip;
-
+  ret.color = color;
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine gen(seed);
+  std::normal_distribution<double> R(600,25), G(550,25), B(450,15);
+  switch (color){
+    case 0:
+      ret.waveLength = R(gen);
+      break;
+    case 1:
+      ret.waveLength = G(gen);
+      break;
+    case 2:
+      ret.waveLength = B(gen);
+      break;
+  }
   return ret;
 
 }

@@ -25,6 +25,7 @@ struct Ray {
   mutable double min_t; ///< treat the ray as a segment (ray "begin" at min_t)
   mutable double max_t; ///< treat the ray as a segment (ray "ends" at max_t)
   double waveLength;
+  int color; // 0 for Red, 1 for Green, 2 for Blue
   Vector3D inv_d;  ///< component wise inverse
 
   Ray() {}
@@ -36,8 +37,8 @@ struct Ray {
    * \param d direction of the ray
    * \param depth depth of the ray
    */
-    Ray(const Vector3D o, const Vector3D d, int depth = 0,double waveLength = 0)
-        : o(o), d(d), min_t(0.0), max_t(INF_D), depth(depth),waveLength(waveLength) {
+    Ray(const Vector3D o, const Vector3D d, int depth = 0,double waveLength = 0,int color = 0)
+        : o(o), d(d), min_t(0.0), max_t(INF_D), depth(depth),waveLength(waveLength),color(color) {
     inv_d = 1.0 / d;
   }
 
@@ -49,8 +50,8 @@ struct Ray {
    * \param max_t max t value for the ray (if it's actually a segment)
    * \param depth depth of the ray
    */
-    Ray(const Vector3D o, const Vector3D d, double max_t, int depth = 0,double waveLength = 0)
-        : o(o), d(d), min_t(0.0), max_t(max_t), depth(depth),waveLength(waveLength) {
+    Ray(const Vector3D o, const Vector3D d, double max_t, int depth = 0,double waveLength = 0,int color = 0)
+        : o(o), d(d), min_t(0.0), max_t(max_t), depth(depth),waveLength(waveLength),color(color) {
     inv_d = 1.0 / d;
   }
 
