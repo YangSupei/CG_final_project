@@ -138,9 +138,9 @@ namespace CGL { namespace SceneObjects {
   }
 
 
-  Vector3D EnvironmentLight::sample_L(const Vector3D p, Vector3D* wi,
+  double EnvironmentLight::sample_L(const Vector3D p, Vector3D* wi,
     double* distToLight,
-    double* pdf) const {
+    double* pdf, double waveLength) const {
     // TODO: Assignment 7 Part 3 Tasks 2 and 3 (step 4)
     // First implement uniform sphere sampling for the environment light
     // Later implement full importance sampling
@@ -165,7 +165,7 @@ namespace CGL { namespace SceneObjects {
     *distToLight = INF_D;
     *pdf = pdf_envmap[y*w+x] * w * h / (2 * PI * PI * sin(angle_coor.x));
 
-    return envMap->data[y*w+x];
+    return envMap->data[y*w+x][0]; //to be finished
 
 
   }

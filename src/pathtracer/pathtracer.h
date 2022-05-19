@@ -47,13 +47,13 @@ namespace CGL {
         /**
          * Trace an ray in the scene.
          */
-        Vector3D estimate_direct_lighting_hemisphere(const Ray& r, const SceneObjects::Intersection& isect);
-        Vector3D estimate_direct_lighting_importance(const Ray& r, const SceneObjects::Intersection& isect);
+        double estimate_direct_lighting_hemisphere(const Ray& r, const SceneObjects::Intersection& isect);
+        double estimate_direct_lighting_importance(const Ray& r, const SceneObjects::Intersection& isect);
 
-        Vector3D est_radiance_global_illumination(const Ray& r);
-        Vector3D zero_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
-        Vector3D one_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
-        Vector3D at_least_one_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
+        double est_radiance_global_illumination(const Ray& r);
+        double zero_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
+        double one_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
+        double at_least_one_bounce_radiance(const Ray& r, const SceneObjects::Intersection& isect);
         
         Vector3D debug_shading(const Vector3D d) {
             return Vector3D(abs(d.r), abs(d.g), .0).unit();

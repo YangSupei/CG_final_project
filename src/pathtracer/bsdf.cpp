@@ -49,20 +49,19 @@ void make_coord_space(Matrix3x3 &o2w, const Vector3D n) {
  * \param wi incident light direction in local space of point of intersection
  * \return reflectance in the given incident/outgoing directions
  */
-Vector3D DiffuseBSDF::f(const Vector3D wo, const Vector3D wi) {
+double DiffuseBSDF::f(const Vector3D wo, const Vector3D wi,const double waveLength, const int color) {
   // TODO (Part 3.1):
   // This function takes in both wo and wi and returns the evaluation of
   // the BSDF for those two directions.
   
-
-  return reflectance / PI;
+  return reflectance[color] / PI;
 
 }
 
 /**
  * Evalutate diffuse lambertian BSDF.
  */
-Vector3D DiffuseBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf) {
+double DiffuseBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf,const double waveLength, const int color) {
   // TODO (Part 3.1):
   // This function takes in only wo and provides pointers for wi and pdf,
   // which should be assigned by this function.
@@ -71,7 +70,7 @@ Vector3D DiffuseBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf) {
   // You can use the `f` function. The reference solution only takes two lines.
   *wi = sampler.get_sample(pdf);
 
-  return this->f(wo,*wi);
+  return this->f(wo,*wi,waveLength,color);
 
 }
 
@@ -87,17 +86,17 @@ void DiffuseBSDF::render_debugger_node()
 /**
  * Evalutate Emission BSDF (Light Source)
  */
-Vector3D EmissionBSDF::f(const Vector3D wo, const Vector3D wi) {
-  return Vector3D();
+double EmissionBSDF::f(const Vector3D wo, const Vector3D wi,const double waveLength, const int color) {
+  return 0;
 }
 
 /**
  * Evalutate Emission BSDF (Light Source)
  */
-Vector3D EmissionBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf) {
+double EmissionBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf,const double waveLength, const int color) {
   *pdf = 1.0 / PI;
   *wi = sampler.get_sample(pdf);
-  return Vector3D();
+  return 0;
 }
 
 void EmissionBSDF::render_debugger_node()
