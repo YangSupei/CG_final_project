@@ -107,7 +107,7 @@ PathTracer::estimate_direct_lighting_importance(const Ray &r,
   // toward the camera if this is a primary ray)
   const Vector3D hit_p = r.o + r.d * isect.t;
   const Vector3D w_out = w2o * (-r.d);
-  double L_out;
+  double L_out = 0;
 
   for(auto light = scene->lights.begin(); light != scene->lights.end(); light++){
     int num_samples;
@@ -119,6 +119,8 @@ PathTracer::estimate_direct_lighting_importance(const Ray &r,
       L_value = (*light)->sample_L(hit_p,&w_in,&dist,&pdf,r.waveLength);
       double bsdfValue = isect.bsdf->f(w_out,w_in,r.waveLength,r.color);
       Ray w_in_ray(hit_p,w_in,1);
+      w_in_ray.waveLength = r.waveLength;
+      w_in_ray.color = r.color;
       w_in = w2o * w_in;
       double cosValue = dot(w_in,Vector3D(0,0,1));
       Intersection w_in_intersection;
@@ -178,9 +180,11 @@ double PathTracer::at_least_one_bounce_radiance(const Ray &r,
     if (r.depth < max_ray_depth && coin_flip(0.7)) {
         Vector3D w_in;
         double pdf;
-        double f = isect.bsdf->sample_f(w_out, &w_in, &pdf,r.waveLength,r.color);            
+        double f = isect.bsdf->sample_f(w_out, &w_in, &pdf,r.waveLength,r.color);    
         Ray sample_ray = Ray(hit_p, (o2w * w_in).unit(), INF_D, r.depth - 1);
         sample_ray.min_t = EPS_D;
+        sample_ray.waveLength = r.waveLength;
+        sample_ray.color = r.color;
         Intersection sample_i;
         if (bvh->intersect(sample_ray, &sample_i)) {
             double l = at_least_one_bounce_radiance(sample_ray, sample_i);

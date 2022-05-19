@@ -120,7 +120,6 @@ void MicrofacetBSDF::render_debugger_node()
 
 double RefractionBSDF::f(const Vector3D wo, const Vector3D wi,const double waveLength, const int color) {
   
-
   return Vector3D()[color];
 }
 
@@ -137,6 +136,7 @@ double RefractionBSDF::sample_f(const Vector3D wo, Vector3D* wi, double* pdf,con
   
   new_ior = (B1 * wl2) / (wl2 - C1) + (B2 * wl2) / (wl2 - C2) + (B3 * wl2) / (wl2 - C3);
   new_ior = sqrt(new_ior + 1);
+  // printf("%lf %.2lf %.2lf\n",new_ior,ior,waveLength);
   if(!BSDF::refract(wo,wi,new_ior,waveLength))
     return Vector3D()[color];
   double eta;
