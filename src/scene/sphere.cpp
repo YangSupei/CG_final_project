@@ -72,6 +72,22 @@ bool Sphere::intersect(const Ray &r, Intersection *i) const {
   else return false;
 }
 
+bool Sphere::intersect(double radius,const Vector3D &center,const Ray &r,double &t1,double &t2) {
+  Vector3D o_to_center = r.o - center;
+
+  double a = dot(r.d, r.d);
+  double b = 2 * dot(o_to_center, r.d);
+  double c = dot(o_to_center, o_to_center) - radius * radius;
+
+  double delta = b * b - 4 * a * c;
+  if (delta < 0) return false;
+
+  t1 = (-b - sqrt(delta)) / (2 * a);
+  t2 = (-b + sqrt(delta)) / (2 * a);
+  
+  return true;
+}
+
 void Sphere::draw(const Color &c, float alpha) const {
   Misc::draw_sphere_opengl(o, r, c);
 }

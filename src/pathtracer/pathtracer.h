@@ -94,7 +94,6 @@ namespace CGL {
 
         Scene* scene;         ///< current scene
         Camera* camera;       ///< current camera
-
         // Tonemapping Controls //
 
         double tm_gamma;                           ///< gamma

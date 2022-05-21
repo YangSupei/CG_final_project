@@ -94,8 +94,7 @@ double AreaLight::sample_L(const Vector3D p, Vector3D* wi,
   double c = 2.998 * pow(10,8), h = 6.626 * pow(0.1,34), k = 1.3806505 * pow(0.1,23);
   double T = 7500;
   energy = 10;
-  // energy = (2 * h * c * c) / pow(waveLength,5) / (exp(h*c/(waveLength*k*T*pow(0.1,3)))-1) * pow(10,25);
-  // printf("%lf %lf %lf\n",(2 * h * c * c),pow(waveLength,5),(exp(h*c/(waveLength*k*T))-1));
+  // energy = (2 * h * c * c) / pow(waveLength,5) / (exp(h*c/(waveLength*k*T*pow(0.1,6)))-1) * pow(10,30);
   // printf("%lf\n",energy);
   return cosTheta < 0 ? energy : 0;
 };

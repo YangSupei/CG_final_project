@@ -181,7 +181,7 @@ double PathTracer::at_least_one_bounce_radiance(const Ray &r,
         Vector3D w_in;
         double pdf;
         double f = isect.bsdf->sample_f(w_out, &w_in, &pdf,r.waveLength,r.color);    
-        Ray sample_ray = Ray(hit_p, (o2w * w_in).unit(), INF_D, r.depth - 1);
+        Ray sample_ray = Ray(hit_p, (o2w * w_in).unit(), INF_D, r.depth + 1);
         sample_ray.min_t = EPS_D;
         sample_ray.waveLength = r.waveLength;
         sample_ray.color = r.color;
@@ -213,6 +213,25 @@ double PathTracer::est_radiance_global_illumination(const Ray &r) {
   return L_out;
 }
 
+
+Vector3D intensity2RGB(Vector3D intensity){
+  double x,y,z;
+  x = intensity[0] * 1.2;
+  y = intensity[1] * 1.0;
+  z = intensity[2] * 1.75;
+
+  x = x / (x + y + z);
+  y = y / (x + y + z);
+  z = z / (x + y + z);
+
+  Matrix3x3 tran(0.4815, -0.1587, -0.0828,-0.0912,  0.2524,  0.0157, 0.0009, -0.0025 ,  0.1786);
+  Vector3D xyz = Vector3D(x,y,z);
+  Vector3D rgb = tran * xyz;
+  // cout << intensity << endl;
+  return rgb;
+}
+
+
 void PathTracer::raytrace_pixel(size_t x, size_t y) {
 
 
@@ -225,25 +244,21 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   for(int i = 0; i < num_samples; i++){
     cnt++;
     for(int color = 0; color < 3; color++){
-      // if(cnt % samplesPerBatch == 0){
-      //   double I;
-      //   miu = s1 / (double) cnt; 
-      //   sigma2 = (1 / ((double)cnt - 1) ) * (s2 - s1 * s1 / (double)cnt);
-      //   I = 1.96 * sqrt(sigma2 / (double)cnt);
-      //   if(I <= maxTolerance * miu) break;
-      // }
       Vector2D samplePosition = origin + gridSampler->get_sample();
       Ray sampledRay;
+      Ray sampledRay2;
       Vector3D temp;
       samplePosition.x /= sampleBuffer.w;
       samplePosition.y /= sampleBuffer.h;
       sampledRay = camera->generate_ray(samplePosition.x,samplePosition.y,color);
+      // while(!camera->generate_ray_real_len(sampledRay2,x,y,color));
+      double cos_term;
+      int tried;
+      // while(!camera->generate_ray_real_len(samplePosition.x,samplePosition.y))
+      // cout << sampledRay.d << " " << sampledRay2.d << endl;
       sampledRay.depth = 0;
       sampledRay.color = color;
       intensity[color] += PathTracer::est_radiance_global_illumination(sampledRay);
-      // sum += temp;
-      // s1 += temp.illum();
-      // s2 += temp.illum() * temp.illum();
     }
     // Vector3D intensity2RGB;
     // printf("#%.2lf %.2lf %.2lf#\n",intensity[0],intensity[1],intensity[2]);
@@ -257,12 +272,11 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   intensity[0] /= cnt;
   intensity[1] /= cnt;
   intensity[2] /= cnt;
-
   // printf("%lf %lf %lf \n",intensity[0],intensity[1],intensity[2]);
 
-  sum = Vector3D(intensity[0],intensity[1],intensity[2]);
-
+  // sum = intensity2RGB(Vector3D(intensity[0],intensity[1],intensity[2]));
   // sum /= (double) cnt;
+  sum = Vector3D(intensity[0],intensity[1],intensity[2]);
   sampleBuffer.update_pixel(sum, x, y);
   sampleCountBuffer[x + y * sampleBuffer.w] = cnt;
 }

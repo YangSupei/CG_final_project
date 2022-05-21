@@ -126,7 +126,7 @@ double RefractionBSDF::f(const Vector3D wo, const Vector3D wi,const double waveL
 double RefractionBSDF::sample_f(const Vector3D wo, Vector3D* wi, double* pdf,const double waveLength, const int color) {
   // TODO Assignment 7: Part 1
   // Implement RefractionBSDF
-  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength;
+  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength * pow(0.1,6);
   B1 = 1.03961212;
   B2 = 0.231792344;
   B3 = 1.01046945;
@@ -169,7 +169,7 @@ double GlassBSDF::sample_f(const Vector3D wo, Vector3D* wi, double* pdf,const do
   // compute Fresnel coefficient and use it as the probability of reflection
   // - Fundamentals of Computer Graphics page 305
 
-  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength;
+  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength * pow(0.1,6);
   B1 = 1.03961212;
   B2 = 0.231792344;
   B3 = 1.01046945;
@@ -179,7 +179,7 @@ double GlassBSDF::sample_f(const Vector3D wo, Vector3D* wi, double* pdf,const do
   
   new_ior = (B1 * wl2) / (wl2 - C1) + (B2 * wl2) / (wl2 - C2) + (B3 * wl2) / (wl2 - C3);
   new_ior = sqrt(new_ior + 1);
-
+  // printf("%lf %lf",ior,new_ior);
 
   double eta;
   if(wo.z > 0){
@@ -245,7 +245,7 @@ bool BSDF::refract(const Vector3D wo, Vector3D* wi, double ior, double waveLengt
   // ray entering the surface through vacuum.
 
   //calculate wavelength dependent ior
-  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength;
+  double B1, B2, B3, C1, C2, C3, new_ior,wl2 = waveLength * waveLength * pow(0.1,6);
   B1 = 1.03961212;
   B2 = 0.231792344;
   B3 = 1.01046945;

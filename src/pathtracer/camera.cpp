@@ -46,6 +46,7 @@ void Camera::configure(const CameraInfo& info, size_t screenW, size_t screenH) {
     vFov = 2 * degrees(atan(tan(radians(hFov) / 2) / ar));
   }
   screenDist = ((double) screenH) / (2.0 * tan(radians(vFov) / 2));
+  init_lens();
 }
 
 /**
