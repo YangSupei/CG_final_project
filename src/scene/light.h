@@ -17,7 +17,7 @@ class DirectionalLight : public SceneLight {
  public:
   DirectionalLight(const Vector3D rad, const Vector3D lightDir);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return true; }
 
  private:
@@ -32,7 +32,7 @@ class InfiniteHemisphereLight : public SceneLight {
  public:
   InfiniteHemisphereLight(const Vector3D rad);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return false; }
 
   Vector3D radiance;
@@ -48,7 +48,7 @@ class PointLight : public SceneLight {
  public: 
   PointLight(const Vector3D rad, const Vector3D pos);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return true; }
 
   Vector3D radiance;
@@ -63,7 +63,7 @@ class SpotLight : public SceneLight {
   SpotLight(const Vector3D rad, const Vector3D pos, 
             const Vector3D dir, double angle);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return true; }
 
   Vector3D radiance;
@@ -81,7 +81,7 @@ class AreaLight : public SceneLight {
             const Vector3D pos,   const Vector3D dir, 
             const Vector3D dim_x, const Vector3D dim_y);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return false; }
 
   Vector3D radiance;
@@ -100,7 +100,7 @@ class SphereLight : public SceneLight {
  public:
   SphereLight(const Vector3D rad, const SphereObject* sphere);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return false; }
 
   const SphereObject* sphere;
@@ -115,7 +115,7 @@ class MeshLight : public SceneLight {
  public:
   MeshLight(const Vector3D rad, const Mesh* mesh);
   double sample_L(const Vector3D p, Vector3D* wi, double* distToLight,
-                    double* pdf, double waveLength = 0) const;
+                    double* pdf,int color = 0, double waveLength = 0) const;
   bool is_delta_light() const { return false; }
 
   const Mesh* mesh;

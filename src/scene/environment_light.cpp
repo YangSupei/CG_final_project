@@ -140,7 +140,7 @@ namespace CGL { namespace SceneObjects {
 
   double EnvironmentLight::sample_L(const Vector3D p, Vector3D* wi,
     double* distToLight,
-    double* pdf, double waveLength) const {
+    double* pdf, int color, double waveLength) const {
     // TODO: Assignment 7 Part 3 Tasks 2 and 3 (step 4)
     // First implement uniform sphere sampling for the environment light
     // Later implement full importance sampling

@@ -116,7 +116,7 @@ PathTracer::estimate_direct_lighting_importance(const Ray &r,
     for(int i = 0; i < num_samples; i++){
       Vector3D w_in;
       double dist,pdf,L_value; 
-      L_value = (*light)->sample_L(hit_p,&w_in,&dist,&pdf,r.waveLength);
+      L_value = (*light)->sample_L(hit_p,&w_in,&dist,&pdf,r.color,r.waveLength);
       double bsdfValue = isect.bsdf->f(w_out,w_in,r.waveLength,r.color);
       Ray w_in_ray(hit_p,w_in,1);
       w_in_ray.waveLength = r.waveLength;

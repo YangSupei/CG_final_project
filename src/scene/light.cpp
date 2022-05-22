@@ -15,7 +15,7 @@ DirectionalLight::DirectionalLight(const Vector3D rad,
 }
 
 double DirectionalLight::sample_L(const Vector3D p, Vector3D* wi,
-                                    double* distToLight, double* pdf, double waveLength) const {
+                                    double* distToLight, double* pdf,int color, double waveLength) const {
   *wi = dirToLight;
   *distToLight = INF_D;
   *pdf = 1.0;
@@ -33,7 +33,7 @@ InfiniteHemisphereLight::InfiniteHemisphereLight(const Vector3D rad)
 
 double InfiniteHemisphereLight::sample_L(const Vector3D p, Vector3D* wi,
                                            double* distToLight,
-                                           double* pdf, double waveLength) const {
+                                           double* pdf,int color, double waveLength) const {
   Vector3D dir = sampler.get_sample();
   *wi = sampleToWorld* dir;
   *distToLight = INF_D;
@@ -48,7 +48,7 @@ PointLight::PointLight(const Vector3D rad, const Vector3D pos) :
 
 double PointLight::sample_L(const Vector3D p, Vector3D* wi,
                              double* distToLight,
-                             double* pdf, double waveLength) const {
+                             double* pdf,int color, double waveLength) const {
   Vector3D d = position - p;
   *wi = d.unit();
   *distToLight = d.norm();
@@ -65,12 +65,16 @@ SpotLight::SpotLight(const Vector3D rad, const Vector3D pos,
 }
 
 double SpotLight::sample_L(const Vector3D p, Vector3D* wi,
-                             double* distToLight, double* pdf, double waveLength) const {
+                             double* distToLight, double* pdf,int color, double waveLength) const {
   return 0;
 }
 
 
 // Area Light //
+
+
+
+
 
 AreaLight::AreaLight(const Vector3D rad, 
                      const Vector3D pos,   const Vector3D dir, 
@@ -79,7 +83,7 @@ AreaLight::AreaLight(const Vector3D rad,
     dim_x(dim_x), dim_y(dim_y), area(dim_x.norm() * dim_y.norm()) { }
 
 double AreaLight::sample_L(const Vector3D p, Vector3D* wi, 
-                             double* distToLight, double* pdf, double waveLength) const {
+                             double* distToLight, double* pdf,int color, double waveLength) const {
 
   Vector2D sample = sampler.get_sample() - Vector2D(0.5f, 0.5f);
   Vector3D d = position + sample.x * dim_x + sample.y * dim_y - p;
@@ -96,7 +100,54 @@ double AreaLight::sample_L(const Vector3D p, Vector3D* wi,
   energy = 10;
   // energy = (2 * h * c * c) / pow(waveLength,5) / (exp(h*c/(waveLength*k*T*pow(0.1,6)))-1) * pow(10,30);
   // printf("%lf\n",energy);
-  return cosTheta < 0 ? energy : 0;
+  double radiance;
+  double temp = 2700;
+  temp /= 100;
+  // Set Temperature = Temperature \ 100
+  if(color == 0){
+    double red;
+    if(temp <= 66) red = 255;
+    else{
+      red = temp - 60;
+      red = 329.698727446 * pow(red,-0.1332047592);
+      if(red < 0) red = 0;
+      else red = 255;
+    }
+    radiance = red;
+  }
+  else if(color == 1){
+    double green;
+    if(temp <= 66){
+      green = temp;
+      green = 99.4708025861 * log(green) - 161.1195681661;
+      if(green < 0) green = 0;
+      if(green > 255) green = 255;
+    }
+    else{
+      green = temp - 60;
+      green = 288.1221695283 *  pow(green,-0.0755148492);
+      if(green < 0) green = 0;
+      if(green > 255) green = 255;
+    }
+    radiance = green;
+  }
+  else{
+    double blue;
+    if(temp >= 66) blue = 255;
+    else{
+      if(temp <= 19) blue = 0;
+      else{
+        blue = temp - 10;
+        blue = 138.5177312231 * log(blue) - 305.0447927307;
+        if(blue < 0) blue = 0;
+        if(blue > 255) blue = 255;
+      }
+    }
+    radiance = blue;
+  }
+  radiance /= 255.0;
+  radiance *= 10;
+  return cosTheta < 0 ? radiance : 0;
 };
 
 
@@ -107,7 +158,7 @@ SphereLight::SphereLight(const Vector3D rad, const SphereObject* sphere) {
 }
 
 double SphereLight::sample_L(const Vector3D p, Vector3D* wi, 
-                               double* distToLight, double* pdf, double waveLength) const {
+                               double* distToLight, double* pdf,int color, double waveLength) const {
 
   return 0;
 }
@@ -119,7 +170,7 @@ MeshLight::MeshLight(const Vector3D rad, const Mesh* mesh) {
 }
 
 double MeshLight::sample_L(const Vector3D p, Vector3D* wi, 
-                             double* distToLight, double* pdf, double waveLength) const {
+                             double* distToLight, double* pdf,int color, double waveLength) const {
   return 0;
 }
 
